@@ -72,8 +72,8 @@
 脚本需要你的 Smogon 论坛账号登录信息，存储在两个文件中：`.env` 和 `smogon-cookies.json`。
 
 ##### 5.1 创建 `smogon-cookies.json` 文件
-1. 前往https://greasyfork.org/en/scripts/550007-export-discord-token-and-smogon-cookies安装脚本
-2. 前往https://www.smogon.com/forums/，右上角会出来一个框，点击绿色的copy按钮。在index.js同个文件夹下创建一个smogon-cookies.json，用记事本打开并黏贴你剪贴板上的内容。
+1. 前往https://greasyfork.org/en/scripts/550007-export-discord-token-and-smogon-cookies 安装脚本
+2. 前往https://www.smogon.com/forums/ ，右上角会出来一个框，点击绿色的copy按钮。在index.js同个文件夹下创建一个smogon-cookies.json，用记事本打开并黏贴你剪贴板上的内容。
    - 示例内容（你的会不同）：
      ```json
      [
