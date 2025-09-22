@@ -1,490 +1,238 @@
 # smogon-bomber-public
-### Windows 系统下安装和配置 Smogon reaction工具的完整指南
 
-这个指南是为完全没有编程经验的朋友准备的。我们将一步步安装 Node.js（运行脚本的必须软件）、设置项目文件夹、安装所需依赖、配置文件，然后运行脚本。整个过程像安装游戏一样简单，只需复制粘贴命令和文件。脚本用于自动抓取 Smogon 论坛搜索结果中的帖子链接，并根据权重随机添加reaction。
 
 #### 注意事项
-- **安全警告**：这个脚本会自动访问 Smogon 论坛并添加反应。**永远不要分享你的cookies**。
-#### 步骤 1: 安装 Node.js
-Node.js 是运行脚本的引擎。
+- **不要分享你的cookies。**
+- **系统要求**：Windows 10 或更高版本，稳定的网络连接。
+---
 
-1. 打开浏览器，访问 Node.js 官网：https://nodejs.org。  
-2. 下载 “LTS” 版本（稳定版），点击 “Windows Installer (.msi)” 下载。
-3. 双击下载的文件运行安装程序。
-4. 在安装向导中，点击 “Next” 直到完成。保持默认设置，选中 “Automatically install the necessary tools” 如果出现。
-5. 安装完后，重启电脑。
-6. 验证安装：按 Win + S 搜索 “cmd” 打开命令提示符，输入命令：
-   ```
-   node --version
-   ```
-   如果显示类似 “v20.x.x”，安装成功。如果出错，重装 Node.js。
+#### 步骤 1: 下载代码
+1. 打开浏览器（推荐 Chrome），访问https://github.com/AnsonIsTheBest/smogon-bomber-public。
+2. 点击绿色的 **Code** 按钮，选择 **Download ZIP**。
+3. 下载完成后，解压 ZIP 文件到一个方便的地方，比如桌面，命名为 `smogon-tool`。
+4. 解压后，你会看到一个文件夹（比如 `smogon-bomber-public`），里面有 `index.js` 等文件。进入这个文件夹，确保 `index.js` 存在。
 
-#### 步骤 2: 创建项目文件夹
-1. 在桌面或任意地方创建一个文件夹，命名 “smogon-tool”。
-2. 进入文件夹，右键 > “新建” > “文本文档”，命名 “index.js”。
-3. 用记事本打开 “index.js”，复制粘贴下面的代码，然后保存：
-   ```
-   const puppeteer = require('puppeteer');
-   const fs = require('fs');
-   
-   // Load environment variables
-   require('dotenv').config();
-   
-   // Configuration
+---
+
+#### 步骤 2: 安装 Node.js（运行脚本的软件）
+
+1. 打开浏览器，访问 Node.js 官网：**https://nodejs.org**。
+2. 下载 **LTS** 版本（稳定版），点击 **Windows Installer (.msi)** 下载。
+3. 双击下载的 `.msi` 文件，运行安装程序：
+   - 点击 **Next**，接受默认设置。
+   - 如果看到 “Automatically install the necessary tools”，勾选它。
+   - 一直点击 **Next** 直到 **Finish**。
+4. 安装完成后，重启电脑。
+5. 验证安装：
+   - 按 **Win + R**，输入“powershell”并回车，打开powershell。
+   - 输入以下命令并按回车：
+     ```
+     node --version
+     ```
+   - 如果显示类似 `v20.x.x`，说明安装成功。如果报错，重新下载安装 Node.js。
+
+---
+
+#### 步骤 3: 设置项目文件夹
+1. 打开解压后的 `smogon-tool` 文件夹（比如 `C:\Users\你的用户名\Desktop\smogon-bomber-public`）。
+2. 检查是否有以下文件：
+   - `index.js`
+
+---
+
+#### 步骤 4: 安装依赖
+你的脚本需要一些额外的工具（`puppeteer` 和 `dotenv`），我们通过命令安装。
+
+1. 打开 **Powershell**：
+   - 按 **Win + R**，打开 “powershell”。
+2. 进入项目文件夹：
+   - 假设文件夹在 `C:\Users\用户名\Desktop\smogon-bomber-public`，输入：
+     ```
+     cd C:\Users\用户名\Desktop\smogon-bomber-public(或者你自己的路径）
+     ```
+   - 按回车，命令提示符路径应变为项目文件夹。
+   - （如果光标左边的字C:\Users\用户名\>变成了C:\Users\用户名\Desktop\smogon-bomber-public>就是成功了）
+3. 安装依赖：
+   - 输入以下命令并按回车：
+     ```
+     npm install puppeteer dotenv
+     ```
+   - 这会下载 `puppeteer`（控制浏览器的工具）和 `dotenv`（读取配置文件的工具）。
+   - 等待几分钟，完成后你会看到一个 `node_modules` 文件夹和 `package.json` 文件。
+4. 验证安装：
+   - 输入：
+     ```
+     dir
+     ```
+   - 确认 `node_modules` 和 `package.json` 存在。
+
+---
+
+#### 步骤 5: 配置登录信息
+脚本需要你的 Smogon 论坛账号登录信息，存储在两个文件中：`.env` 和 `smogon-cookies.json`。
+
+##### 5.1 创建 `smogon-cookies.json` 文件
+1. 前往https://greasyfork.org/en/scripts/550007-export-discord-token-and-smogon-cookies安装脚本
+2. 前往https://www.smogon.com/forums/，右上角会出来一个框，点击绿色的copy按钮。在index.js同个文件夹下创建一个smogon-cookies.json，用记事本打开并黏贴你剪贴板上的内容。
+   - 示例内容（你的会不同）：
+     ```json
+     [
+       {
+         "name": "xf_session",
+         "value": "abc123...",
+         "domain": "www.smogon.com",
+         "path": "/",
+         "expires": 1741083164,
+         ...
+       },
+       {
+         "name": "xf_user",
+         "value": "xyz789...",
+         ...
+       }
+     ]
+     ```
+
+---
+
+#### 步骤 6: 配置搜索和反应
+你的 `index.js` 已经包含搜索链接和反应权重。如果需要修改：
+
+1. 打开 `index.js`（用记事本），找到以下部分：
+   ```javascript
    const SEARCH_URLS = [
-     'https://www.smogon.com/forums/search/63693360/?q=%2A&c[older_than]=1741083164&c[users]=MirrorSaMa&o=date', // 第一个搜索
-     'https://www.smogon.com/forums/search/63692680/?q=%2A&c[users]=liliou&o=date', // 示例第二个搜索（替换为你的）
-     // 添加更多URL，例如：
-     // 'https://www.smogon.com/forums/search/NEW_ID/?q=%2A&c[users]=NewUser&o=date',
+     'https://www.smogon.com/forums/search/63693360/?q=%2A&c[older_than]=1741083164&c[users]=MirrorSaMa&o=date',
+     'https://www.smogon.com/forums/search/63692680/?q=%2A&c[users]=liliou&o=date',
    ];
+   ```
+   - 这些是搜索链接。每次搜索你需要更换链接。如果需要对一个用户定向轰炸请访问smogon->用户主页->postings->view more->复制网址，黏贴进来。支持批量处理，就是说可以复制好几个人的链接一次跑完。用''包含链接并用,分割各个链接：
+     ```javascript
+     const SEARCH_URLS = [
+       '你的新搜索链接',
+       '另一个搜索链接',
+     ];
+     ```
+2. 找到反应权重部分：
+   ```javascript
    const REACTION_WEIGHTS = [
      { id: 1, weight: 0.5 }, // 50% 概率 (Like)
      { id: 2, weight: 0.3 }, // 30% 概率 (Love)
      { id: 3, weight: 0.2 }, // 20% 概率 (Informative)
    ];
-   const LINK_PATTERN = /\/forums\/threads\/[^\s]+\/post-(\d+)/i; // Matches thread post links
-   const SMOGON_USERNAME = process.env.SMOGON_USERNAME || 'YOUR_SMOGON_USERNAME';
-   const SMOGON_PASSWORD = process.env.SMOGON_PASSWORD || 'YOUR_SMOGON_PASSWORD';
-   const PROGRESS_FILE = 'progress.json'; // Progress file
-   
-   // Helper function for delay
-   const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
-   
-   // Weighted random reaction_id
-   function getWeightedRandomReactionId() {
-     const totalWeight = REACTION_WEIGHTS.reduce((sum, { weight }) => sum + weight, 0);
-     let random = Math.random() * totalWeight;
-     for (const { id, weight } of REACTION_WEIGHTS) {
-       random -= weight;
-       if (random <= 0) return id;
-     }
-     return REACTION_WEIGHTS[REACTION_WEIGHTS.length - 1].id; // Fallback
-   }
-   
-   // Load progress from file
-   function loadProgress() {
-     if (fs.existsSync(PROGRESS_FILE)) {
-       try {
-         const data = JSON.parse(fs.readFileSync(PROGRESS_FILE));
-         console.log(`Loaded progress from ${PROGRESS_FILE}: ${data.searches.length} searches, ${Object.keys(data.progress).length} posts`);
-         return data;
-       } catch (err) {
-         console.error(`Failed to load ${PROGRESS_FILE}: ${err.message}`);
-       }
-     }
-     console.log(`No ${PROGRESS_FILE} found, starting fresh`);
-     return { searches: [], progress: {} };
-   }
-   
-   // Save progress to file
-   function saveProgress(searches, progress) {
-     try {
-       fs.writeFileSync(PROGRESS_FILE, JSON.stringify({ searches, progress }, null, 2));
-       console.log(`Progress saved to ${PROGRESS_FILE}`);
-     } catch (err) {
-       console.error(`Failed to save ${PROGRESS_FILE}: ${err.message}`);
-     }
-   }
-   
-   async function scrapeAndReact() {
-     console.log('Starting Smogon search react tool (multi-search, weighted random reactions, with progress saving and error handling)...');
-     
-     // Load existing progress
-     let { searches, progress } = loadProgress();
-     let allPostIds = new Set();
-     
-     const browser = await puppeteer.launch({
-       headless: true, // Set to false to watch
-       args: ['--no-sandbox', '--disable-setuid-sandbox'],
-       executablePath: '/home/codespace/.cache/puppeteer/chrome/linux-140.0.7339.82/chrome-linux64/chrome',
-     });
-     
-     let page;
-     try {
-       page = await browser.newPage();
-       console.log('New page created');
-       
-       // Set user-agent to avoid detection
-       await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36');
-       
-       // Load pre-exported cookies
-       if (fs.existsSync('smogon-cookies.json')) {
-         const cookies = JSON.parse(fs.readFileSync('smogon-cookies.json'));
-         await page.setCookie(...cookies);
-         console.log('Loaded cookies from smogon-cookies.json');
-       } else {
-         console.log('No smogon-cookies.json found - will attempt login if needed');
-       }
-       
-       // Step 1: Scrape all search URLs
-       for (let searchIndex = 0; searchIndex < SEARCH_URLS.length; searchIndex++) {
-         const BASE_SEARCH_URL = SEARCH_URLS[searchIndex];
-         console.log(`\n=== Running Search ${searchIndex + 1}/${SEARCH_URLS.length}: ${BASE_SEARCH_URL} ===`);
-         
-         // Check if this search was already processed
-         let existingSearch = searches.find(s => s.url === BASE_SEARCH_URL);
-         if (!existingSearch) {
-           existingSearch = { url: BASE_SEARCH_URL, postIds: [], lastPage: 0 };
-           searches.push(existingSearch);
-         }
-         
-         let currentPage = existingSearch.lastPage + 1 || 1;
-         let hasMorePages = true;
-         let searchPostIds = new Set(existingSearch.postIds);
-         
-         console.log(`  Resuming from page ${currentPage} (last page processed: ${existingSearch.lastPage || 0})`);
-         
-         // Scrape pages for this search
-         while (hasMorePages) {
-           const searchUrl = `${BASE_SEARCH_URL}&page=${currentPage}`;
-           console.log(`  Scraping page ${currentPage}: ${searchUrl}`);
-           
-           try {
-             await page.goto(searchUrl, { waitUntil: 'networkidle2', timeout: 60000 });
-           } catch (err) {
-             console.error(`  Navigation failed for ${searchUrl}: ${err.message}`);
-             const pageContent = page ? await page.content() : 'No page content';
-             const debugFile = `debug-nav-search-${searchIndex + 1}-${currentPage}-${new Date().toISOString().replace(/[:.]/g, '-')}.html`;
-             fs.writeFileSync(debugFile, pageContent);
-             console.log(`  Navigation error saved to ${debugFile}`);
-             hasMorePages = false;
-             continue; // Skip to next page or search
-           }
-           
-           // Handle login if redirected
-           if (page.url().includes('login')) {
-             console.log(`  Login required for search page - redirected to: ${page.url()}`);
-             const pageContent = await page.content();
-             const debugFile = `debug-login-search-${searchIndex + 1}-${currentPage}-${new Date().toISOString().replace(/[:.]/g, '-')}.html`;
-             fs.writeFileSync(debugFile, pageContent);
-             console.log(`  Login page saved to ${debugFile}`);
-             
-             const loginInput = await page.$('input[name="login"]');
-             const passwordInput = await page.$('input[name="password"]');
-             const submitButton = await page.$('button[type="submit"]');
-             if (!loginInput || !passwordInput || !submitButton) {
-               console.log('  Login form elements not found');
-               hasMorePages = false;
-               continue; // Skip to next page or search
-             }
-             await page.type('input[name="login"]', SMOGON_USERNAME);
-             await page.type('input[name="password"]', SMOGON_PASSWORD);
-             try {
-               await Promise.all([
-                 page.click('button[type="submit"]'),
-                 page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 60000 }),
-               ]);
-               console.log(`  Login submitted, Current URL: ${page.url()}`);
-               await page.context().cookies().then(cookies => fs.writeFileSync('cookies.json', JSON.stringify(cookies)));
-               await page.goto(searchUrl, { waitUntil: 'networkidle2', timeout: 60000 });
-             } catch (err) {
-               console.error(`  Login navigation failed: ${err.message}`);
-               hasMorePages = false;
-               continue; // Skip to next page or search
-             }
-           }
-           
-           // Check for no results
-           const noResults = await page.$('.searchResults--noResults');
-           if (noResults) {
-             console.log(`  No results on page ${currentPage} - stopping pagination for this search`);
-             hasMorePages = false;
-             break;
-           }
-           
-           // Check for redirection (indicates last page)
-           const currentUrl = page.url();
-           const expectedUrl = searchUrl;
-           if (!currentUrl.includes(`page=${currentPage}`) && currentUrl !== expectedUrl) {
-             console.log(`  Redirected to ${currentUrl} - likely last page, stopping pagination for this search`);
-             hasMorePages = false;
-           }
-           
-           // Extract post links
-           const links = await page.evaluate(() => {
-             const aTags = Array.from(document.querySelectorAll('a[href*="/threads/"]'));
-             return aTags
-               .map(a => a.href)
-               .filter(href => /\/forums\/threads\/.*\/post-\d+/.test(href));
-           });
-           
-           console.log(`  Found ${links.length} thread post links on page ${currentPage}`);
-           links.forEach(link => {
-             const match = link.match(LINK_PATTERN);
-             if (match) {
-               const postId = match[1];
-               searchPostIds.add(postId);
-               allPostIds.add(postId);
-               if (!progress[postId]) progress[postId] = { status: 'pending' };
-               if (!existingSearch.postIds.includes(postId)) {
-                 existingSearch.postIds.push(postId);
-               }
-             }
-           });
-           
-           // Update last page processed
-           existingSearch.lastPage = currentPage;
-           
-           // Save progress after each page
-           saveProgress(searches, progress);
-           
-           // Stop if no links found (extra safety)
-           if (links.length === 0) {
-             console.log(`  No links found on page ${currentPage} - stopping pagination for this search`);
-             hasMorePages = false;
-           }
-           
-           if (hasMorePages) currentPage++;
-           await delay(2000); // Rate limit delay
-         }
-         
-         console.log(`  Search ${searchIndex + 1} complete: Found ${searchPostIds.size} unique post IDs`);
-       }
-       
-       console.log(`\nTotal unique post IDs across all searches: ${allPostIds.size}`);
-       
-       // Step 2: Process each post for reaction
-       for (const postId of allPostIds) {
-         if (progress[postId] && ['reacted', 'skipped', 'error'].includes(progress[postId].status)) {
-           console.log(`\nSkipping post ${postId}: Already ${progress[postId].status} (${progress[postId].reason || ''})`);
-           continue;
-         }
-         
-         const reactionId = getWeightedRandomReactionId();
-         const reactUrl = `https://www.smogon.com/forums/posts/${postId}/react?reaction_id=${reactionId}`;
-         console.log(`\nProcessing post ${postId}: ${reactUrl} (reaction_id=${reactionId})`);
-         
-         try {
-           await page.goto(reactUrl, { waitUntil: 'networkidle2', timeout: 60000 });
-           
-           // Handle login if redirected
-           if (page.url().includes('login')) {
-             console.log(`  Login required for post ${postId} - redirected to: ${page.url()}`);
-             const pageContent = await page.content();
-             const debugFile = `debug-login-post-${postId}-${new Date().toISOString().replace(/[:.]/g, '-')}.html`;
-             fs.writeFileSync(debugFile, pageContent);
-             console.log(`  Login page saved to ${debugFile}`);
-             
-             const loginInput = await page.$('input[name="login"]');
-             const passwordInput = await page.$('input[name="password"]');
-             const submitButton = await page.$('button[type="submit"]');
-             if (!loginInput || !passwordInput || !submitButton) {
-               console.log('  Login form elements not found');
-               progress[postId] = { status: 'error', reason: 'Login form elements not found' };
-               saveProgress(searches, progress);
-               continue; // Skip to next post
-             }
-             await page.type('input[name="login"]', SMOGON_USERNAME);
-             await page.type('input[name="password"]', SMOGON_PASSWORD);
-             try {
-               await Promise.all([
-                 page.click('button[type="submit"]'),
-                 page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 60000 }),
-               ]);
-               console.log(`  Login submitted, Current URL: ${page.url()}`);
-               await page.context().cookies().then(cookies => fs.writeFileSync('cookies.json', JSON.stringify(cookies)));
-               await page.goto(reactUrl, { waitUntil: 'networkidle2', timeout: 60000 });
-             } catch (err) {
-               console.error(`  Login navigation failed: ${err.message}`);
-               progress[postId] = { status: 'error', reason: `Login navigation failed: ${err.message}` };
-               saveProgress(searches, progress);
-               continue; // Skip to next post
-             }
-           }
-           
-           // Check for existing reaction by searching for "remove" in page text
-           const pageText = await page.evaluate(() => document.body.textContent.toLowerCase());
-           if (pageText.includes('remove')) {
-             console.log(`  Post ${postId} already reacted with reaction_id=${reactionId} - skipping`);
-             progress[postId] = { status: 'skipped', reason: `Already reacted with reaction_id=${reactionId}` };
-             saveProgress(searches, progress);
-             continue;
-           }
-           
-           // Check for invalid post or login error
-           const errorMessage = await page.$('.blockMessage--error');
-           if (errorMessage) {
-             const errorText = await page.evaluate(el => el.textContent, errorMessage);
-             console.log(`  Error on post ${postId}: ${errorText}`);
-             const pageContent = await page.content();
-             const debugFile = `debug-error-${postId}-${new Date().toISOString().replace(/[:.]/g, '-')}.html`;
-             fs.writeFileSync(debugFile, pageContent);
-             console.log(`  Error page saved to ${debugFile}`);
-             progress[postId] = { status: 'error', reason: errorText };
-             saveProgress(searches, progress);
-             continue; // Skip to next post
-           }
-           
-           await delay(2000); // Wait for dynamic content
-           
-           // Find and click Confirm button
-           const selectors = [
-             'button.button--icon--confirm',
-             'button.button--primary',
-             'button:has-text("Confirm")',
-             'button[type="submit"]',
-           ];
-           
-           let clicked = false;
-           let usedSelector = null;
-           for (const selector of selectors) {
-             console.log(`  Trying selector: ${selector}`);
-             const button = await page.$(selector).catch(err => {
-               console.error(`  Selector ${selector} failed: ${err.message}`);
-               return null;
-             });
-             if (button) {
-               usedSelector = selector;
-               console.log(`  Clicking Confirm button with selector: ${usedSelector}`);
-               await page.click(usedSelector);
-               clicked = true;
-               break;
-             }
-           }
-           
-           if (!clicked) {
-             console.log(`  Confirm button not found for post ${postId} - likely permission issue, skipping`);
-             const pageContent = await page.content();
-             const debugFile = `debug-react-${postId}-${new Date().toISOString().replace(/[:.]/g, '-')}.html`;
-             fs.writeFileSync(debugFile, pageContent);
-             console.log(`  Debug saved to ${debugFile}`);
-             progress[postId] = { status: 'error', reason: 'Confirm button not found - likely permission issue' };
-             saveProgress(searches, progress);
-             continue; // Skip to next post
-           } else {
-             console.log(`  ✅ Reacted to post ${postId} with reaction_id=${reactionId}`);
-             progress[postId] = { status: 'reacted', reaction_id: reactionId };
-             saveProgress(searches, progress);
-           }
-           
-           await delay(3000); // Rate limit delay
-         }
-         
-         console.log('\nAll posts across all searches processed!');
-       } catch (error) {
-         console.error(`Fatal error (non-post specific): ${error.message}`);
-         if (page) {
-           const pageContent = await page.content();
-           const debugFile = `debug-fatal-${new Date().toISOString().replace(/[:.]/g, '-')}.html`;
-           fs.writeFileSync(debugFile, pageContent);
-           console.log(`Fatal error debug saved to ${debugFile}`);
-         }
-       } finally {
-         console.log('Closing browser');
-         if (browser) await browser.close();
-       }
-  }
-
-// Run the script
-
-scrapeAndReact().catch(console.error);
-
-```
-
-### Running Steps
-1. **Save the Script**:
-   - Copy the `<xaiArtifact>` content to `/workspaces/smogon-bomber/smogon-bomber-release/index.js`.
-   - Or via terminal:
-     ```bash
-     cd /workspaces/smogon-bomber/smogon-bomber-release
-     nano index.js
-     ```
-     Paste, save (Ctrl+O, Enter), exit (Ctrl+X).
-2. **Verify Files**:
-   ```bash
-   ls -a
-   cat .env
-   cat smogon-cookies.json
-   cat progress.json
    ```
-   - `.env`: Ensure `SMOGON_USERNAME=AnsonIsTheBest` and `SMOGON_PASSWORD=anson20080130`.
-   - `smogon-cookies.json`: Check for valid `xf_session` and `xf_user` (not expired).
-   - `progress.json`: Review for post statuses (e.g., `error` for permission issues).
-3. **Run the Script**:
-   ```bash
+   - 这控制反应类型概率（`id=1` 是 Like，`id=2` 是 Love，`id=3` 是haha。剩下三个忘了）。
+   - 可修改权重（保持正数），例如：
+     ```javascript
+     const REACTION_WEIGHTS = [
+       { id: 1, weight: 0.7 }, // 70% 概率 (Like)
+       { id: 2, weight: 0.2 }, // 20% 概率 (Love)
+       { id: 3, weight: 0.1 }, // 10% 概率 (Informative)
+     ];
+     ```
+3. 保存 `index.js`。
+
+---
+
+#### 步骤 7: 运行脚本
+1. 打开 **命令提示符**（Win + S，搜索 “cmd”）。
+2. 进入项目文件夹：
+   ```
+   cd C:\Users\你的用户名\Desktop\smogon-tool\smogon-bomber-release
+   ```
+3. 运行脚本：
+   ```
    node index.js
    ```
-4. **Manual Reset Progress** (If Needed):
-   ```bash
-   rm progress.json
-   node index.js
+4. 脚本会开始运行，显示类似以下输出：
    ```
-5. **Monitor Progress**:
-   - Logs show resumption (e.g., `Resuming from page 3`, `Skipping post 10708857: Already error (...)`).
-   - For permission issues, it will log “Confirm button not found - likely permission issue, skipping” and continue.
+   Starting Smogon search react tool (multi-search, weighted random reactions, with progress saving and error handling)...
+   Loaded progress from progress.json: 2 searches, 25 posts
+   New page created
+   Loaded cookies from smogon-cookies.json
+   ...
+   Processing post 10703515: https://www.smogon.com/forums/posts/10703515/react?reaction_id=2 (reaction_id=2)
+   ✅ Reacted to post 10703515 with reaction_id=2
+   Progress saved to progress.json
+   ```
+5. 如果中断（比如关机），下次运行 `node index.js`，脚本会从上次进度继续（检查 `progress.json`）。
 
-### Expected Output (With Error Handling)
-```
-Starting Smogon search react tool (multi-search, weighted random reactions, with progress saving and error handling)...
-Loaded progress from progress.json: 2 searches, 25 posts
-New page created
-Loaded cookies from smogon-cookies.json
+---
 
-=== Running Search 1/2: https://www.smogon.com/forums/search/63693360/?q=%2A&c[older_than]=1741083164&c[users]=MirrorSaMa&o=date ===
-  Resuming from page 3 (last page processed: 2)
-  Scraping page 3: https://www.smogon.com/forums/search/63693360/?q=%2A&c[older_than]=1741083164&c[users]=MirrorSaMa&o=date&page=3
-  Found 5 thread post links on page 3
-  Progress saved to progress.json
-  ...
-  Search 1 complete: Found 15 unique post IDs
-
-=== Running Search 2/2: https://www.smogon.com/forums/search/63692680/?q=%2A&c[users]=liliou&o=date ===
-  Resuming from page 2 (last page processed: 1)
-  
-  Search 2 complete: Found 10 unique post IDs
-
-Total unique post IDs across all searches: 25
-
-Skipping post 10708857: Already error (Confirm button not found - likely permission issue)
-Processing post 10703515: https://www.smogon.com/forums/posts/10703515/react?reaction_id=2 (reaction_id=2)
-  Trying selector: button.button--icon--confirm
-  Clicking Confirm button with selector: button.button--icon--confirm
-  ✅ Reacted to post 10703515 with reaction_id=2
-  Progress saved to progress.json
-
-All posts across all searches processed!
-Closing browser
-```
-
-### Troubleshooting
-1. **Permission Errors**:
-   - The script now skips these posts and marks them as `error` in `progress.json`.
-   - Check `debug-react-*.html` or `debug-error-*.html` for details (e.g., “You must be logged-in” or “No permission”).
-   - Share one debug file content.
-2. **Login Issues**:
-   - Re-export `smogon-cookies.json` (Chrome: F12 > Application > Cookies > Copy as JSON).
-   - Test in private browser.
-   - If 2FA/CAPTCHA, set `headless: false` and handle manually.
-3. **Progress Not Resuming**:
-   - Check `progress.json`:
-     ```bash
-     cat progress.json
+#### 步骤 8: 检查进度
+1. 脚本运行时，会在文件夹中生成 `progress.json`，记录搜索链接、帖子 ID 和处理状态（`pending`、`reacted`、`skipped`、`error`）。
+2. 查看进度：
+   - 打开文件夹，用记事本打开 `progress.json`。
+   - 示例内容：
+     ```json
+     {
+       "searches": [
+         {
+           "url": "https://www.smogon.com/forums/search/63693360/...",
+           "postIds": ["10708857", "10703515"],
+           "lastPage": 2
+         }
+       ],
+       "progress": {
+         "10708857": { "status": "error", "reason": "Confirm button not found - likely permission issue" },
+         "10703515": { "status": "reacted", "reaction_id": 2 }
+       }
+     }
      ```
-   - Reset if needed:
-     ```bash
-     rm progress.json
+3. 如果想重新开始（忽略之前进度）：
+   - 删除 `progress.json`：
      ```
-4. **Button Not Found**:
-   - Share `<button>` HTML from `https://www.smogon.com/forums/posts/10708857/react?reaction_id=2`.
-5. **Script Crashes**:
-  - Check `debug-fatal-*.html` for non-post errors.
-  - Increase delays or timeouts.
+     del progress.json
+     ```
+   - 重新运行：
+     ```
+     node index.js
+     ```
 
-### Notes
-- **Smogon ToS**: Automated reactions violate rules. Use test account, increase delays (e.g., `delay(5000)`) to avoid bans.
-- **Customize**:
-  - Add URLs to `SEARCH_URLS`.
-  - Adjust `REACTION_WEIGHTS`.
-- **Backup**: Copy `progress.json` before resetting:
-  ```bash
-  cp progress.json progress-backup.json
+---
+
+#### 故障排除
+1. **命令提示符报错**：
+   - 如果 `node --version` 失败，重新安装 Node.js。
+   - 如果 `npm install` 失败，确保网络连接正常，重新运行：
+     ```
+     npm install puppeteer dotenv
+     ```
+2. **登录失败**（日志显示 “You must be logged-in to do that”）：
+   - 检查 `smogon-cookies.json`：
+     - 打开 Chrome，访问 Smogon，重新登录。
+     - 按 F12 > Application > Cookies > 复制 JSON 到 `smogon-cookies.json`。
+   - 检查 `.env` 文件，确保用户名和密码正确。
+   - 如果有验证码，修改 `index.js`，将 `headless: true` 改为 `headless: false`，保存后运行，浏览器会弹出，手动完成验证码。
+3. **权限问题**（日志显示 “Confirm button not found - likely permission issue”）：
+   - 正常现象，脚本会跳过无权限的帖子，继续处理其他帖子。
+   - 检查 `progress.json`，确认这些帖子标记为 `error`。
+   - 如果太多帖子无权限，检查 Smogon 账号是否有访问权限（可能需要更高权限的账号）。
+4. **脚本卡住或崩溃**：
+   - 检查日志最后几行，找 `debug-*.html` 文件（在项目文件夹中）。
+   - 打开一个 `debug-error-*.html` 或 `debug-react-*.html`，复制内容给我。
+   - 清理缓存：
+     ```
+     rmdir /s /q node_modules
+     npm install puppeteer dotenv
+     ```
+5. **进度没有继续**：
+   - 检查 `progress.json` 是否存在且格式正确。
+   - 如果损坏，删除并重新运行：
+     ```
+     del progress.json
+     node index.js
+     ```
+
+---
+
+#### 额外说明
+- **Smogon 使用规则**：自动反应可能导致账号被封，建议用测试账号，延长脚本延迟（在 `index.js` 中将 `await delay(3000)` 改为 `await delay(5000)`）。
+- **自定义**：
+  - 添加新搜索链接：编辑 `index.js` 的 `SEARCH_URLS` 数组。
+  - 调整反应概率：修改 `REACTION_WEIGHTS`（确保 `id` 对应 Smogon 的反应类型，例如 1=Like，2=Love，3=Informative）。
+- **备份**：定期复制 `progress.json`：
+  ```
+  copy progress.json progress-backup.json
   ```
 
-Run the updated script and share:
-- Full logs (redact `SMOGON_USERNAME`, `SMOGON_PASSWORD`).
-- `cat progress.json` output.
-- `ls -a /home/codespace/.cache/puppeteer/chrome` output.
-- Content of one `debug-*.html` if errors occur.
-- `<button>` HTML from a reaction page.
-
-If you need a GUI or specific weights, let me know!
+---
