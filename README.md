@@ -7,7 +7,7 @@
 ---
 
 #### 步骤 1: 下载代码
-1. 打开浏览器（推荐 Chrome），访问https://github.com/AnsonIsTheBest/smogon-bomber-public。
+1. 打开浏览器（推荐 Chrome），访问https://github.com/AnsonIsTheBest/smogon-bomber-public 。
 2. 点击绿色的 **Code** 按钮，选择 **Download ZIP**。
 3. 下载完成后，解压 ZIP 文件到一个方便的地方，比如桌面，命名为 `smogon-tool`。
 4. 解压后，你会看到一个文件夹（比如 `smogon-bomber-public`），里面有 `index.js` 等文件。进入这个文件夹，确保 `index.js` 存在。
