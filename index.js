@@ -6,21 +6,15 @@ require('dotenv').config();
 
 // Configuration
 const SEARCH_URLS = [
-  //'https://www.smogon.com/forums/search/63694383/?c[users]=MirrorSaMa&o=date', // 第一个搜索
-  //'https://www.smogon.com/forums/search/63693355/?c[older_than]=1752329949&c[users]=MirrorSaMa&o=date', // 示例第二个搜索（替换为你的）
-  //'https://www.smogon.com/forums/search/63693360/?c[older_than]=1741083164&c[users]=MirrorSaMa&o=date',
-  //'https://www.smogon.com/forums/search/63694401/?c[older_than]=1726837739&c[users]=MirrorSaMa&o=date',
-  'https://www.smogon.com/forums/search/63694425/?c[users]=cloud+and+book&o=date',
-  'https://www.smogon.com/forums/search/63694446/?c[older_than]=1754750588&c[users]=cloud+and+book&o=date',
-  'https://www.smogon.com/forums/search/63694450/?c[older_than]=1751900660&c[users]=cloud+and+book&o=date',
-  'https://www.smogon.com/forums/search/63694453/?c[older_than]=1743950138&c[users]=cloud+and+book&o=date',
-  'https://www.smogon.com/forums/search/63694463/?c[older_than]=1733576685&c[users]=cloud+and+book&o=date',// 添加更多URL，例如：
+  'https://www.smogon.com/forums/search/63693360/?q=%2A&c[older_than]=1741083164&c[users]=MirrorSaMa&o=date', // 第一个搜索
+  'https://www.smogon.com/forums/search/63692680/?q=%2A&c[users]=liliou&o=date', // 示例第二个搜索（替换为你的）
+  // 添加更多URL，例如：
   // 'https://www.smogon.com/forums/search/NEW_ID/?q=%2A&c[users]=NewUser&o=date',
 ];
 const REACTION_WEIGHTS = [
-  { id: 1, weight: 0.1 }, // 50% 概率
-  { id: 2, weight: 0.9 }, // 30% 概率
-  { id: 3, weight: 0.01 }, // 20% 概率
+  { id: 1, weight: 0.5 }, // 50% 概率 (Like)
+  { id: 2, weight: 0.3 }, // 30% 概率 (Love)
+  { id: 3, weight: 0.2 }, // 20% 概率 (Informative)
 ];
 const LINK_PATTERN = /\/forums\/threads\/[^\s]+\/post-(\d+)/i; // Matches thread post links
 const SMOGON_USERNAME = process.env.SMOGON_USERNAME || 'YOUR_SMOGON_USERNAME';
@@ -265,7 +259,7 @@ async function scrapeAndReact() {
             await page.context().cookies().then(cookies => fs.writeFileSync('cookies.json', JSON.stringify(cookies)));
             await page.goto(reactUrl, { waitUntil: 'networkidle2', timeout: 60000 });
           } catch (err) {
-            console.error(`  Login navigation failed for post ${postId}: ${err.message}`);
+            console.error(`  Login navigation failed: ${err.message}`);
             progress[postId] = { status: 'error', reason: `Login navigation failed: ${err.message}` };
             saveProgress(searches, progress);
             continue; // Skip to next post
@@ -281,7 +275,7 @@ async function scrapeAndReact() {
           continue;
         }
         
-        // Check for invalid post or permission error
+        // Check for invalid post or login error
         const errorMessage = await page.$('.blockMessage--error');
         if (errorMessage) {
           const errorText = await page.evaluate(el => el.textContent, errorMessage);
@@ -329,16 +323,16 @@ async function scrapeAndReact() {
           fs.writeFileSync(debugFile, pageContent);
           console.log(`  Debug saved to ${debugFile}`);
           progress[postId] = { status: 'error', reason: 'Confirm button not found - likely permission issue' };
+          saveProgress(searches, progress);
+          continue; // Skip to next post
         } else {
           console.log(`  ✅ Reacted to post ${postId} with reaction_id=${reactionId}`);
           progress[postId] = { status: 'reacted', reaction_id: reactionId };
+          saveProgress(searches, progress);
         }
         
-        // Save progress after each post
-        saveProgress(searches, progress);
-        
         await delay(3000); // Rate limit delay
-      } catch (err) {
+      } catch (err) { // 添加缺失的 catch 块
         console.error(`  Error processing post ${postId}: ${err.message}`);
         const pageContent = page ? await page.content() : 'No page content';
         const debugFile = `debug-error-${postId}-${new Date().toISOString().replace(/[:.]/g, '-')}.html`;
@@ -367,3 +361,4 @@ async function scrapeAndReact() {
 
 // Run the script
 scrapeAndReact().catch(console.error);
+
